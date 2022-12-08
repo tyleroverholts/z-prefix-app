@@ -65,18 +65,22 @@ const getUserID = (username) => {
   return userID
 }
 
-// app.get('/', async (req,res) => {
-//   let userID = await getUserID('Test')
-//   console.log(userID)
-// })
+const getUsername = (userID) => {
+  let userName = knex('users')
+  .select('username')
+  .where('id', '=', `${userID}`)
+  .then(rows => rows[0].username)
+  return userName
+}
 
 //BEGIN REQUESTS
+
 app.get('/inventory', async (req, res) => {
   let items
   try {
     items = await knex('items')
-      .select('*')
-      .then(rows => rows)
+    .select('*')
+    .then(rows => rows)
     res.status(200).send(items);
   }catch(err) {
     console.log(err);
@@ -84,26 +88,10 @@ app.get('/inventory', async (req, res) => {
   }
 })
 
-app.post('/inventory', async (req, res) => {
-  const { body } = req;
-  const quantity = parseInt(body.quantity)
-  let userID = await getUserID(body.username)
-  console.log(typeof userID);
-  try {
-    let newItem = await knex('items')
-      .insert({user_id:`${userID}`, item_name: `${body.itemname}`, description: `${body.description}`, quantity: `${quantity}`}, 'id')
-      .then(id => {
-        console.log(id)
-        res.status(201).send('Item creation successful.')
-      })
-  }
-  catch(err){
-    console.log(err)
-  }
-})
-
 app.get('/inventory/:username', async (req, res) => {
-  const username = req.session.username;
+  let username = req.session.username;
+  console.log(req.session.username)
+  console.log(req.params.username)
   if(username === req.params.username){
     try{
       let items
@@ -121,19 +109,59 @@ app.get('/inventory/:username', async (req, res) => {
   }
 })
 
+app.post('/logout', async (req, res) => {
+  try{
+    req.session = null;
+    res.status(200).json('Session terminated.')
+  }
+  catch(err){
+    console.log(err)
+    res.status(400).json('There was a problem processing your request.')
+  }
+})
+
+app.post('/getUser', async (req, res)=> {
+  const { body } = req
+  try{
+    let userID = await getUsername(body.userID)
+    res.status(302).json(userID)
+  }
+  catch(err){
+    console.log(err)
+    res.status(400).send('There was a problem accessing the user.')
+  }
+})
+
+app.post('/inventory', async (req, res) => {
+  const { body } = req;
+  const quantity = parseInt(body.quantity)
+  let userID = await getUserID(body.username)
+  try {
+    let newItem = await knex('items')
+      .insert({user_id:`${userID}`, item_name: `${body.itemname}`, description: `${body.description}`, quantity: `${quantity}`}, 'id')
+      .then(id => {
+        console.log(id)
+        res.status(201).json('Item creation successful.')
+      })
+  }
+  catch(err){
+    console.log(err)
+  }
+})
+
 app.post('/CreateAccount', async (req, res) => {
   const { body } = req;
   const hashedPass = await passHasher(body.password)
   try {
     let newUser = await knex('users')
-      .insert({first_name: `${body.firstName}`, last_name: `${body.lastName}`, username: `${body.username}`, password: `${hashedPass}`}, 'id')
-      .then(id => {
-        console.log(id)
-        res.status(201).send('User creation successful.')
+    .insert({first_name: `${body.firstName}`, last_name: `${body.lastName}`, username: `${body.username}`, password: `${hashedPass}`}, 'id')
+    .then(id => {
+        res.status(201).json('User creation successful.')
       })
   }
   catch(err){
     console.log(err)
+    res.status(400).json('There was an error processing your request.')
   }
 })
 
@@ -144,7 +172,6 @@ app.post('/Login', async (req, res) => {
     let doesMatch = await hashCompare(body.password, storedPass)
     if(doesMatch){
       req.session.username = req.body.username;
-      console.log(req.session.username)
       res.status(202).send('Authenticated')
     }else{
       res.status(404).json('Password does not match.')
@@ -156,35 +183,34 @@ app.post('/Login', async (req, res) => {
   }
 })
 
+app.patch('/inventory', async (req, res) => {
+  const { body } = req;
+  const item = body.itemname;
+  try {
+    let editItem = await knex('items')
+      .where('item_name', 'LIKE', `${item}`)
+      .update({item_name: `${body.itemname}`, description: `${body.description}`, quantity: `${body.quantity}`})
+      .then(() => {
+        res.status(201).json('Item was successfully updated.')
+      })
+  }catch(err){
+    console.log(err)
+    res.status(400).json('There was an error processing your request.')
+  }
+})
 
-
-// app.delete('/', async (req, res) => {
-//   const { body } = req;
-//   try {
-//     let deleteMovie = await knex('movies')
-//       .delete('*').where('id', '=', `${body.id}`)
-//     res.status(202).json('Item successfully deleted.')
-//   }
-//   catch(err){
-//     console.log(err)
-//     res.status(400).json('There was a problem processing your request.')
-//   }
-// })
-
-// app.put('/', async (req, res) => {
-//   const { body } = req;
-//   try {
-//     let setWatched = await knex('movies')
-//       .where('id', '=', `${body.id}`)
-//       .update({
-//         watched: `${body.watched}`
-//       })
-//     res.status(200).json('Watched toggled.')
-//   }
-//   catch(err){
-//     console.log(body);
-//     res.status(400).json('There was an error processing your request.')
-//   }
-// })
+app.delete('/inventory', async (req, res) => {
+  const { body } = req;
+  console.log(body)
+  try {
+    let deleteItem = await knex('items')
+      .delete('*').where('id', '=', `${body.id}`)
+    res.status(202).json('Item successfully deleted.')
+  }
+  catch(err){
+    console.log(err)
+    res.status(400).json('There was a problem processing your request.')
+  }
+})
 
 module.exports = app

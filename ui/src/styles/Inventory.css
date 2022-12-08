@@ -1,0 +1,20 @@
+.inventory-page{
+  display:flex;
+  flex-direction: column;
+  margin-left: 1em;
+}
+
+.page-contents{
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.item-link{
+  text-decoration: none;
+  color: white;
+}

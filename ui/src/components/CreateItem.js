@@ -4,86 +4,92 @@ import Context from '../Context';
 import cookie from 'cookie';
 
 const CreateItem = () => {
-  const cookies=cookie.parse(document.cookie);
-  const [itemName, setItemName] = useState(null)
-  const [description, setDescription] = useState(null)
-  const [quantity, setQuantity] = useState(null)
   const [postBody, setPostBody] = useState(null)
-  const { setRedirect } = useContext(Context)
+  const { cookies, editEnabled, setEditEnabled, itemDefaults} = useContext(Context)
   const navigate = useNavigate();
 
   const handleItemName = (event) => {
-    setItemName(event.target.value)
+    setPostBody((
+      {
+        ...postBody,
+        itemname: event.target.value
+      }
+      ))
     return;
   }
-
   const handleDescription = (event) => {
-    setDescription(event.target.value)
+    setPostBody((
+      {
+        ...postBody,
+        description: event.target.value
+      }
+      ))
     return;
   }
-
   const handleQuantity = (event) => {
-    setQuantity(event.target.value)
+    setPostBody((
+      {
+        ...postBody,
+        quantity: event.target.value
+      }
+      ))
     return;
   }
 
-  const clearFields = () => {
-    setItemName('')
-    setQuantity('')
-    setDescription('')
-  }
+  useEffect(() => {
+    if(itemDefaults) setPostBody(itemDefaults)
+  }, [itemDefaults])
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(typeof postBody.quantity)
     fetch('http://localhost:8080/inventory', {
-      method: 'POST',
+      method: (editEnabled ? 'PATCH' : 'POST'),
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(postBody),
+      body: JSON.stringify({
+        ...postBody,
+        username: cookies.username
+      }),
       credentials: 'include'
     })
+    .then(res => res.json())
     .then(res => {
-      if(res.status === 201){
-        clearFields();
-        console.log(res.status);
-        setRedirect(true);
+        setEditEnabled(false);
         navigate(`/inventory/${cookies.username}`);
-      }else{
-        throw res
-      }
+        alert(res)
       })
     .catch(err => {
       console.log(err);
     })
   }
 
-  useEffect(() => {
-    setPostBody({
-      username: cookies.username,
-      itemname: itemName,
-      description: description,
-      quantity: quantity
-    })
-  }, [cookies.username, itemName, quantity, description])
-
+  //BEGIN RENDER
   return(
     <>
+    {postBody ?
     <div className='create-item'>
-          <h1>Create New Item</h1>
+          {editEnabled ? <h1>Edit Item</h1> : <h1>Create New Item</h1>}
+          <button onClick={editEnabled ? ()=>setEditEnabled(false) : () => {navigate('/inventory/:username'); }}>Cancel</button>
           <form className='item-input'>
             <div>
             <label htmlFor='item-name'>Item Name:</label>
-            <input type='text' onChange={handleItemName}/>
+            <input type='text' value={postBody.itemname} onChange={handleItemName}/><br/>
+            <br/>
             <label htmlFor='item-description'>Item Description:</label>
-            <input type='text' onChange={handleDescription}/>
+            <input type='text' value={postBody.description} onChange={handleDescription}/><br/>
+            <br/>
             <label htmlFor='item-quantity' >Item Quantity:</label>
-            <input type='number' onChange={handleQuantity}/>
+            <input type='number' value={postBody.quantity}onChange={handleQuantity}/><br/>
             </div>
-            <button type='submit' onClick={handleSubmit}>Add Item</button>
+            <p>Entered by: {cookies.username}</p>
+            <button type='submit' onClick={handleSubmit}>Submit</button>
           </form>
-        </div></>
+        </div>
+    :
+    <p>Page is loading...</p>
+    }
+    </>
   )
 }
 

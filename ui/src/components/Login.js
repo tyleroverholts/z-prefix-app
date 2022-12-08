@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useContext} from 'react';
 import { Routes, Route, useNavigate} from 'react-router-dom';
 import Context from '../Context';
+import cookie from 'cookie'
 
 const Login = () => {
   const navigate = useNavigate();
   const [loginName, setLoginName] = useState(null);
   const [loginPass, setLoginPass] = useState(null);
   const [postBody, setPostBody] = useState(null)
-  const { setRedirect } = useContext(Context)
+  const { setIsSpecificInventory, setRefresh, setCookies, cookies} = useContext(Context)
+
 
   const handleLoginName = (event) => {
     setLoginName(event.target.value)
@@ -42,8 +44,10 @@ const Login = () => {
         console.log(res.status);
         document.cookie = `username=${username}`
         document.cookie = "loggedIn=true"
-        setRedirect(true);
-        navigate(`/inventory/${username}`);
+        setCookies(cookie.parse(document.cookie))
+        setIsSpecificInventory(true)
+        setRefresh(true)
+        setTimeout(() =>navigate(`/inventory/${username}`), 500);
       }else{
         throw res
       }

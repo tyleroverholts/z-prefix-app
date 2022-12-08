@@ -1,0 +1,8 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: slategray;
+  margin-left: -0.5em;
+  margin-right: -0.5em
+}

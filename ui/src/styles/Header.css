@@ -1,0 +1,15 @@
+.header{
+  display:flex;
+  justify-content: space-between;
+  background-color: darkgrey;
+  /* margin: -0.5em; */
+  margin: -0.5em;
+  margin-bottom: 0em;
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+.buttons{
+  display:flex;
+  align-self: center;
+}

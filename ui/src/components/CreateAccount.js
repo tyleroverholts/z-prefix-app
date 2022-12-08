@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 // import Context from './Context.js';
 import { useNavigate } from 'react-router-dom';
 import Context from '../Context';
+import cookie from 'cookie'
 
 const CreateAccount = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const CreateAccount = () => {
   const [userName, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [postBody, setPostBody] = useState(null);
-  const { redirect, setRedirect } = useContext(Context);
+  const { setRefresh, setCookies } = useContext(Context);
 
   const handleFNChange = (event) => {
     setFirstName(event.target.value)
@@ -41,6 +42,7 @@ const CreateAccount = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    let username = postBody.username
     fetch('http://localhost:8080/CreateAccount', {
       method: 'POST',
       headers: {
@@ -48,11 +50,11 @@ const CreateAccount = () => {
       },
       body: JSON.stringify(postBody)
     })
+    .then(res => res.json())
     .then(res => {
       clearFields();
       alert(res);
-      setRedirect(true);
-      navigate('/');
+      navigate(`/Login`);
       })
     .catch(err => {
       console.log(err);
@@ -85,7 +87,7 @@ const CreateAccount = () => {
         <label htmlFor='password'>Password:</label>
         <input type='password' required='required' id='password' onChange={handlePWChange}/>
         <div>
-          <input type='submit' value='Add' onClick={handleSubmit}/>
+          <input type='submit' value='Create User' onClick={handleSubmit}/>
         </div>
        </form>
     </>
