@@ -3,6 +3,8 @@ import { useNavigate} from 'react-router-dom';
 import Context from '../Context';
 import cookie from 'cookie'
 import '../styles/Login.css'
+import config from './config.js';
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,7 +32,7 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     let username = postBody.username
-    fetch('http://localhost:8080/Login', {
+    fetch(ApiUrl +'/Login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

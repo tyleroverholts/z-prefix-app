@@ -5,7 +5,6 @@ import '../styles/Header.css'
 import cookie from 'cookie'
 
 
-
 const Header = () => {
   const navigate = useNavigate()
   const { cookies, logout, setRefresh} = useContext(Context)

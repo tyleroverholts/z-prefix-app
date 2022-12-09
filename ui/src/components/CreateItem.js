@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate} from 'react-router-dom';
 import Context from '../Context';
 import '../styles/CreateItem.css'
+import config from './config.js';
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 const CreateItem = () => {
   const [postBody, setPostBody] = useState(null)
@@ -50,7 +52,7 @@ const CreateItem = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if(validateName()){
-      fetch('http://localhost:8080/inventory', {
+      fetch(ApiUrl + '/inventory', {
         method: (editEnabled ? 'PATCH' : 'POST'),
         headers: {
           'Content-Type': 'application/json'

@@ -3,6 +3,8 @@ import { Link, useNavigate} from 'react-router-dom';
 import Context from '../Context';
 import '../styles/Inventory.css'
 
+import config from './config.js';
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 const Inventory = () => {
   const navigate = useNavigate();
@@ -12,7 +14,7 @@ const Inventory = () => {
   //DETERMINE ITEMS TO FETCH
   useEffect(() => {
     isSpecificInventory ?
-      fetch(`http://localhost:8080/inventory/${cookies.username}`, {
+      fetch(ApiUrl +`/inventory/${cookies.username}`, {
         credentials: "include"
       })
       .then(res => res.json())
@@ -28,7 +30,7 @@ const Inventory = () => {
       })
     :
     window.history.replaceState(null, 'Inventory', '/inventory')
-    fetch('http://localhost:8080/inventory')
+    fetch(ApiUrl +'/inventory')
     .then(res => res.json())
     .then(items => {
       setItems(items);

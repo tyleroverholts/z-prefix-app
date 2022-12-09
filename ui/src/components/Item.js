@@ -4,6 +4,8 @@ import Context from '../Context';
 import CreateItem from './CreateItem';
 import SingleItem from './SingleItem';
 import '../styles/Item.css'
+import config from './config.js';
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 const Item = () => {
   const navigate = useNavigate()
@@ -21,7 +23,7 @@ const Item = () => {
   //GET USERNAME FOR CURRENT ITEM
   useEffect(() => {
     if(currentItem){
-      fetch('http://localhost:8080/getUser',
+      fetch(ApiUrl +'/getUser',
       {method: 'POST',
         headers: {
           'Content-Type': 'application/json'

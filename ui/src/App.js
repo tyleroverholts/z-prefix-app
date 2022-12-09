@@ -40,7 +40,7 @@ function App() {
 
   const logout = () => {
     let noUser = ''
-    fetch('http://localhost:8080/logout',{
+    fetch(ApiUrl+ '/logout',{
       method: 'POST',
       credentials: 'include'
     })
@@ -59,7 +59,7 @@ function App() {
   }
 
   const deleteItem = (itemID) => {
-    fetch('http://localhost:8080/inventory', {
+    fetch(ApiUrl + '/inventory', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
