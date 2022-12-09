@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { Routes, Route, useNavigate} from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import Context from '../Context';
 import cookie from 'cookie'
+import '../styles/Login.css'
 
 const Login = () => {
   const navigate = useNavigate();
   const [loginName, setLoginName] = useState(null);
   const [loginPass, setLoginPass] = useState(null);
   const [postBody, setPostBody] = useState(null)
-  const { setIsSpecificInventory, setRefresh, setCookies, cookies} = useContext(Context)
+  const { setIsSpecificInventory, setRefresh, setCookies} = useContext(Context)
 
 
   const handleLoginName = (event) => {
@@ -29,7 +30,6 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     let username = postBody.username
-    console.log(postBody)
     fetch('http://localhost:8080/Login', {
       method: 'POST',
       headers: {
@@ -40,17 +40,20 @@ const Login = () => {
     })
     .then(res => {
       if(res.status === 202){
-        clearFields();
-        console.log(res.status);
         document.cookie = `username=${username}`
         document.cookie = "loggedIn=true"
         setCookies(cookie.parse(document.cookie))
         setIsSpecificInventory(true)
         setRefresh(true)
         setTimeout(() =>navigate(`/inventory/${username}`), 500);
+        return res.json()
       }else{
-        throw res
+        return res.json()
       }
+      })
+      .then(res => {
+        clearFields()
+        alert(res)
       })
     .catch(err => {
       console.log(err);
@@ -72,9 +75,9 @@ const Login = () => {
       </div>
       <label htmlFor='input-field'>New User:</label>
       <form className='create-user'>
-        <label htmlFor='username'>Username:</label>
+        <label htmlFor='username' minLength='1'>Username:</label>
         <input type='text' required='required' id='username' onChange={handleLoginName}/>
-        <label htmlFor='password'>Password:</label>
+        <label htmlFor='password'minLength='1'>Password:</label>
         <input type='password' required='required' id='password' onChange={handleLoginPass}/>
         <div>
           <input type='submit' value='Login' onClick={handleSubmit}/>

@@ -1,18 +1,20 @@
-import React, { useState, useEffect, useContext} from 'react';
-import { Routes, Route, useNavigate} from 'react-router-dom';
+import React, { useEffect, useContext} from 'react';
+import { useNavigate} from 'react-router-dom';
 import Context from '../Context';
-import cookie from 'cookie';
 import '../styles/Header.css'
+import cookie from 'cookie'
 
 
 
 const Header = () => {
   const navigate = useNavigate()
-  const { cookies, logout, refresh, setRefresh} = useContext(Context)
+  const { cookies, logout, setRefresh} = useContext(Context)
+
+  console.log(cookies)
 
   useEffect(() => {
     setRefresh(false)
-  }, [refresh, cookies])
+  }, [cookies])
 
   return(
     <>

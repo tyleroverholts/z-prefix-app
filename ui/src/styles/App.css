@@ -1,8 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Quantico&family=Titillium+Web&display=swap');
+
 .app {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  background-color: slategray;
+  align-items: center;
+  height: 100vh;
+  background-color: rgb(221, 221, 221);
   margin-left: -0.5em;
-  margin-right: -0.5em
+  margin-right: -0.5em;
+  font-family: 'Titillium Web', sans-serif;
+}
+
+button{
+  font-family: 'Titillium Web', sans-serif;
+  width: fit-content;
+  margin: 1em;
+  margin-left: 0em;
+  border: 1px solid rgb(141, 141, 141);
+  border-radius: 0.3em;
+  background-color: rgb(58, 58, 58);
+  color:white;
+  cursor: pointer;
 }

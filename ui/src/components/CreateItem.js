@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Routes, Route, useNavigate} from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import Context from '../Context';
-import cookie from 'cookie';
+import '../styles/CreateItem.css'
 
 const CreateItem = () => {
   const [postBody, setPostBody] = useState(null)
@@ -36,32 +36,43 @@ const CreateItem = () => {
     return;
   }
 
+  const validateName = () => {
+    if(postBody.itemname){
+      return postBody.itemname.length ? true : false
+    }
+    return false
+  }
+
   useEffect(() => {
     if(itemDefaults) setPostBody(itemDefaults)
   }, [itemDefaults])
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch('http://localhost:8080/inventory', {
-      method: (editEnabled ? 'PATCH' : 'POST'),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ...postBody,
-        username: cookies.username
-      }),
-      credentials: 'include'
-    })
-    .then(res => res.json())
-    .then(res => {
-        setEditEnabled(false);
-        navigate(`/inventory/${cookies.username}`);
-        alert(res)
+    if(validateName()){
+      fetch('http://localhost:8080/inventory', {
+        method: (editEnabled ? 'PATCH' : 'POST'),
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...postBody,
+          username: cookies.username
+        }),
+        credentials: 'include'
       })
-    .catch(err => {
-      console.log(err);
-    })
+      .then(res => res.json())
+      .then(res => {
+          setEditEnabled(false);
+          setTimeout(() => navigate(`/inventory/${cookies.username}`),500);
+          alert(res)
+        })
+      .catch(err => {
+        console.log(err);
+      })
+    }else{
+      alert('Item must have a name.')
+    }
   }
 
   //BEGIN RENDER
@@ -69,23 +80,33 @@ const CreateItem = () => {
     <>
     {postBody ?
     <div className='create-item'>
+      <div className='create-div'>
           {editEnabled ? <h1>Edit Item</h1> : <h1>Create New Item</h1>}
-          <button onClick={editEnabled ? ()=>setEditEnabled(false) : () => {navigate('/inventory/:username'); }}>Cancel</button>
           <form className='item-input'>
             <div>
-            <label htmlFor='item-name'>Item Name:</label>
-            <input type='text' value={postBody.itemname} onChange={handleItemName}/><br/>
-            <br/>
-            <label htmlFor='item-description'>Item Description:</label>
-            <input type='text' value={postBody.description} onChange={handleDescription}/><br/>
-            <br/>
-            <label htmlFor='item-quantity' >Item Quantity:</label>
-            <input type='number' value={postBody.quantity}onChange={handleQuantity}/><br/>
+              <div className='single-item-edit'>
+                <label htmlFor='item-name'>Item Name:</label>
+                <input className='create-input'type='text' required='required'value={postBody.itemname} onChange={handleItemName}/><br/>
+              </div>
+              <br/>
+              <div className='single-item-edit'>
+                <label htmlFor='item-description'>Item Description:</label>
+                <input className='create-input' type='text' value={postBody.description} onChange={handleDescription}/><br/>
+              </div>
+              <br/>
+              <div className='single-item-edit'>
+                <label htmlFor='item-quantity' >Item Quantity:</label>
+                <input className='create-input'type='number' required='required' value={postBody.quantity > 1 ? postBody.quantity : 1} onChange={handleQuantity}/><br/>
+              </div>
+              </div>
+              <p>Entered by: {cookies.username}</p>
+              <div className='create-buttons'>
+                <button type='submit' onClick={handleSubmit}>Submit</button>
+                <button onClick={editEnabled ? ()=>setEditEnabled(false) : () => {navigate('/inventory/:username'); }}>Cancel</button>
             </div>
-            <p>Entered by: {cookies.username}</p>
-            <button type='submit' onClick={handleSubmit}>Submit</button>
           </form>
-        </div>
+      </div>
+    </div>
     :
     <p>Page is loading...</p>
     }

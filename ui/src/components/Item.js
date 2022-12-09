@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Routes, Route, Link, useNavigate} from 'react-router-dom';
+import React, { useEffect, useContext } from 'react';
+import { useNavigate} from 'react-router-dom';
 import Context from '../Context';
-import cookie from 'cookie';
 import CreateItem from './CreateItem';
 import SingleItem from './SingleItem';
+import '../styles/Item.css'
 
 const Item = () => {
   const navigate = useNavigate()
@@ -41,7 +41,9 @@ const Item = () => {
         })
         setEditEnabled(false)
       })
-      .then(console.log(itemDefaults))
+      .catch(err => {
+        console.log(err)
+      })
     }
   }, [])
 
@@ -54,19 +56,24 @@ const Item = () => {
       </div>
     :
     currentItem !== null?
-      <div>
+    <div className='create-item'>
+      <div className='item-div'>
+        <div className='item-header'>
+        <h1 className='title'>{currentItem.item_name}</h1>
+        <div className='item-buttons'>
+        <button className='item-button' onClick={cookies.username ? ()=> {setCurrentItem(null); navigate(`/inventory/${cookies.username}`)} : ()=>navigate('/')}>Back to Inventory</button>
           {cookies.username ?
-            <div>
-              {console.log(itemDefaults)}
-              <h1>{currentItem.item_name}</h1>
-              <button className='enable-edit' onClick={()=> setEditEnabled(true)}>Edit Item</button>
-              <button className='delete-item' onClick={() => deleteItem(currentItem.id)}>Delete Item</button>
-            </div>
+          <>
+              <button className='item-button' onClick={()=> setEditEnabled(true)}>Edit Item</button>
+              <button className='item-button' onClick={() => deleteItem(currentItem.id)}>Delete Item</button>
+          </>
           :
           <></>}
-          <button onClick={cookies.username ? ()=> {setCurrentItem(null); navigate(`/inventory/${cookies.username}`)} : ()=>navigate('/')}>Back to Inventory</button>
+        </div>
+        </div>
           <SingleItem />
       </div>
+    </div>
       :
      <p>Page loading...</p>
 

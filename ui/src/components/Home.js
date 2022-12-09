@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route} from 'react-router-dom';
-import Header from './Header.js'
+import React from 'react';
 import Inventory from './Inventory.js'
 
 

@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Routes, Route, Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import Context from '../Context';
-import cookie from 'cookie';
-import Item from './Item.js'
 import '../styles/Inventory.css'
-import SingleItem from './SingleItem';
+
 
 const Inventory = () => {
   const navigate = useNavigate();
@@ -36,6 +34,9 @@ const Inventory = () => {
       setItems(items);
       return;
     })
+    .catch(err => {
+      console.log(err)
+    })
   }, [isSpecificInventory, cookies])
 
   //HELPERS
@@ -54,24 +55,20 @@ const Inventory = () => {
     <div className='inventory-page'>{items !== null ?
       <div className='page-contents'>
         <div className='page-header'>
-          <h1>Current Inventory:</h1>
+          <h1 className='inv-header-text'>Current Inventory</h1>
         </div>
-
+        <button onClick={()=> {navigate('/CreateItem'); resetItemDefaults()}}>Create New Item</button>
         {isSpecificInventory ?
-        <div>
-            <button onClick={()=> {navigate('/CreateItem'); resetItemDefaults()}}>Create New Item</button>
-            <button onClick={()=> {navigate('/'); setIsSpecificInventory(false)}}>View Full Inventory</button>
-        </div>
+          <button onClick={()=> {navigate('/'); setIsSpecificInventory(false)}}>View Full Inventory</button>
         : <></>}
-
+        {cookies.username && !isSpecificInventory ? <button onClick={inventoryRedirect}>See My Inventory</button> : <></>}
         <div className='item'>
-          {cookies.username.length && !isSpecificInventory ? <button onClick={inventoryRedirect}>See My Inventory</button> : <></>}
           {typeof items !== 'string' && items.length ? items.map((item, index) => {
           return(
-            <div key={index}>
+            <div className='inventory-item' key={index}>
               <Link className='item-link' onClick={()=>viewCurrentItem(item)}>
               <p>Name: {item.item_name}</p>
-              <p>Description: {item.description}</p>
+              <p className='item-description'>Description: {item.description ? item.description : <>No description provided. No description provided. No description provided. No description provided. No description provided.  </>}</p>
               </Link>
             </div>
           )}

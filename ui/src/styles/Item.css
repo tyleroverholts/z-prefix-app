@@ -1,0 +1,13 @@
+
+
+.item-div{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.item-header{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}

@@ -1,0 +1,12 @@
+.single-item-div{
+  display:flex;
+  flex-direction: column;
+  align-self: flex-start;
+}
+
+.item{
+  margin-top: -0.3em;
+}
+.title{
+  margin-bottom: -0.3em
+}

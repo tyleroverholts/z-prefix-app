@@ -3,16 +3,10 @@ const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
-const knex = require('knex')({
-  client: 'pg',
-  connection: {
-    host: '127.0.0.1',
-    port: 5432,
-    user: 'postgres',
-    password: 'docker',
-    database: 'inventory'
-  }
-});
+
+const env = process.env.NODE_ENV || 'development'
+const config = require('../knexfile')[env]
+const knex = require('knex')(config)
 
 const app = express();
 app.use(cors({
@@ -35,9 +29,14 @@ const passHasher = (password) => {
   return hash
 }
 
-const hashCompare = (inputPassword, storedHash) => {
-  let doesMatch = bcrypt.compareSync(inputPassword, storedHash)
-  return doesMatch
+const hashCompare = async (inputPassword, storedHash) => {
+  try{
+    let doesMatch = bcrypt.compareSync(inputPassword, storedHash)
+    return doesMatch
+  }
+  catch(err){
+    throw 'There was a problem with your username or password.'
+  }
 }
 
 const retrievePass = async (username) => {
@@ -47,22 +46,28 @@ const retrievePass = async (username) => {
     .select('password').where('username', '=', `${username}`)
     .then(array => array[0].password)
     .catch(err => {
-      console.log(err)
-      console.log('There was a problem retrieving the password.')
+      // console.log(err)
+      throw 'No password found.'
     })
   }
   catch(err) {
-    console.log(err)
+    // console.log(err)
+    return err
   }
   return hash
 }
 
-const getUserID = (username) => {
-  let userID = knex('users')
-  .select('id')
-  .where('username', '=', `${username}`)
-  .then(rows => rows[0].id)
-  return userID
+const getUserID = async (username) => {
+  try{
+    let userID = await knex('users')
+    .select('id')
+    .where('username', '=', `${username}`)
+    .then(rows => rows[0].id)
+    return userID
+  }
+  catch(err){
+    throw err
+  }
 }
 
 const getUsername = (userID) => {
@@ -80,18 +85,20 @@ app.get('/inventory', async (req, res) => {
   try {
     items = await knex('items')
     .select('*')
-    .then(rows => rows)
+    .then(rows => {
+      if(rows.length){
+        return rows
+      }else return []
+    })
     res.status(200).send(items);
   }catch(err) {
-    console.log(err);
-    res.send('There was an error processing your request.')
+    // console.log(err);
+    res.json('There was an error processing your request.')
   }
 })
 
 app.get('/inventory/:username', async (req, res) => {
   let username = req.session.username;
-  console.log(req.session.username)
-  console.log(req.params.username)
   if(username === req.params.username){
     try{
       let items
@@ -101,8 +108,8 @@ app.get('/inventory/:username', async (req, res) => {
           .then(rows => rows)
         res.status(200).send(items);
       }catch(err) {
-        console.log(err);
-        res.send('There was an error processing your request.')
+        // console.log(err);
+        res.status(404).json('Problem retrieving inventory.')
       }
   }else{
     res.status(404).json('You do not have permission to view this page.')
@@ -115,7 +122,7 @@ app.post('/logout', async (req, res) => {
     res.status(200).json('Session terminated.')
   }
   catch(err){
-    console.log(err)
+    // console.log(err)
     res.status(400).json('There was a problem processing your request.')
   }
 })
@@ -127,7 +134,7 @@ app.post('/getUser', async (req, res)=> {
     res.status(302).json(userID)
   }
   catch(err){
-    console.log(err)
+    // console.log(err)
     res.status(400).send('There was a problem accessing the user.')
   }
 })
@@ -140,12 +147,12 @@ app.post('/inventory', async (req, res) => {
     let newItem = await knex('items')
       .insert({user_id:`${userID}`, item_name: `${body.itemname}`, description: `${body.description}`, quantity: `${quantity}`}, 'id')
       .then(id => {
-        console.log(id)
         res.status(201).json('Item creation successful.')
       })
   }
   catch(err){
-    console.log(err)
+    // console.log(err)
+    res.json(err)
   }
 })
 
@@ -156,11 +163,11 @@ app.post('/CreateAccount', async (req, res) => {
     let newUser = await knex('users')
     .insert({first_name: `${body.firstName}`, last_name: `${body.lastName}`, username: `${body.username}`, password: `${hashedPass}`}, 'id')
     .then(id => {
-        res.status(201).json('User creation successful.')
+        res.status(201).json('User creation successful. Please log in.')
       })
   }
   catch(err){
-    console.log(err)
+    // console.log(err)
     res.status(400).json('There was an error processing your request.')
   }
 })
@@ -172,14 +179,14 @@ app.post('/Login', async (req, res) => {
     let doesMatch = await hashCompare(body.password, storedPass)
     if(doesMatch){
       req.session.username = req.body.username;
-      res.status(202).send('Authenticated')
+      res.status(202).json('Authenticated')
     }else{
-      res.status(404).json('Password does not match.')
+      res.status(404).json('There was a problem with your username or password.')
     }
   }
   catch(err){
-    console.log(err);
-    res.send('An error occurred.')
+    // console.log(err);
+    res.json(err)
   }
 })
 
@@ -194,7 +201,7 @@ app.patch('/inventory', async (req, res) => {
         res.status(201).json('Item was successfully updated.')
       })
   }catch(err){
-    console.log(err)
+    // console.log(err)
     res.status(400).json('There was an error processing your request.')
   }
 })
@@ -208,7 +215,7 @@ app.delete('/inventory', async (req, res) => {
     res.status(202).json('Item successfully deleted.')
   }
   catch(err){
-    console.log(err)
+    // console.log(err)
     res.status(400).json('There was a problem processing your request.')
   }
 })

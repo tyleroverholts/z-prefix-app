@@ -1,7 +1,8 @@
 .inventory-page{
   display:flex;
   flex-direction: column;
-  margin-left: 1em;
+  flex-wrap: wrap;
+  width: 50%
 }
 
 .page-contents{
@@ -14,7 +15,29 @@
   justify-content: flex-start;
 }
 
+.inventory-item{
+  max-width: 50em;
+  background-color: white;
+  border-radius: 1em;
+  border: 2px solid slategray;
+  padding: 0.5em;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  margin-bottom: 1em;
+}
 .item-link{
   text-decoration: none;
-  color: white;
+  color:black
+}
+
+.item-description{
+  white-space: nowrap;
+  overflow:hidden;
+  max-width: 50em;
+  max-height: 2em;
+  text-overflow:ellipsis;
+}
+
+.inv-header-text{
+  margin-bottom: -0.3em;
 }

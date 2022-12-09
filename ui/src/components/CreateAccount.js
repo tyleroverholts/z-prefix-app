@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 // import Context from './Context.js';
 import { useNavigate } from 'react-router-dom';
-import Context from '../Context';
-import cookie from 'cookie'
+import '../styles/CreateAccount.css'
 
 const CreateAccount = () => {
   const navigate = useNavigate();
@@ -11,7 +10,6 @@ const CreateAccount = () => {
   const [userName, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [postBody, setPostBody] = useState(null);
-  const { setRefresh, setCookies } = useContext(Context);
 
   const handleFNChange = (event) => {
     setFirstName(event.target.value)
@@ -40,25 +38,39 @@ const CreateAccount = () => {
     setUsername('')
   }
 
+  const validateInputs = () =>{
+    const { firstName, lastName, username, password } = postBody;
+    let validFN = firstName ? (firstName.length ? true : false) : false;
+    let validLN = lastName ? (lastName.length ? true : false) : false;
+    let validPass = password ? (password.length > 7 ? true : alert('Password must be at least 8 characters.')) : false;
+    let validUN = userName ? (userName.length ? true : false) : false;
+
+    if(validFN && validLN && validPass && validUN) return true;
+    else return false;
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    let username = postBody.username
-    fetch('http://localhost:8080/CreateAccount', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(postBody)
-    })
-    .then(res => res.json())
-    .then(res => {
-      clearFields();
-      alert(res);
-      navigate(`/Login`);
+    if(validateInputs()){
+      fetch('http://localhost:8080/CreateAccount', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postBody)
       })
-    .catch(err => {
-      console.log(err);
-    })
+      .then(res => res.json())
+      .then(res => {
+        clearFields();
+        alert(res);
+        navigate(`/Login`);
+        })
+      .catch(err => {
+        console.log(err);
+      })
+    }else{
+      alert('All highlighted fields must be filled out.')
+    }
   }
 
   //SET THE POST BODY EACH TIME A FIELD CHANGES

@@ -1,0 +1,28 @@
+version: "3"
+services:
+
+  db:
+    image: 'postgres:latest'
+    container_name: db
+    ports:
+      - "5432:5432"
+    # volumes:
+    #   - '/home/tyleroverholts/z-prefix-app/db_volumes:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+      # POSTGRES_INITDB_ARGS: CREATE DATABASE db
+
+  api:
+    build: ./server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  ui:
+    build: ./ui
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
