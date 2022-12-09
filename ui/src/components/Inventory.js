@@ -44,7 +44,7 @@ const Inventory = () => {
   //HELPERS
   const inventoryRedirect = async () => {
     await setIsSpecificInventory(true)
-    navigate(`/inventory/${cookies.username}`);
+    setTimeout(() => navigate(`/inventory/${cookies.username}`), 500);
   }
 
   const viewCurrentItem = async (item) => {
