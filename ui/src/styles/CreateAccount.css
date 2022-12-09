@@ -5,3 +5,11 @@ input:valid{
 input:invalid:required{
   border: 2px solid red;
 }
+
+.create-accnt-header{
+  display: flex;
+  flex-direction: column;
+}
+.create-new-user{
+  margin-bottom: -0em
+}

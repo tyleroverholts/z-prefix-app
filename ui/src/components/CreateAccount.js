@@ -84,8 +84,9 @@ const CreateAccount = () => {
   }, [password, userName, firstName, lastName])
 
   return(
-    <>
-      <div className='home-button'>
+    <div className='create-item'>
+      <div className='create-accnt-header'>
+        <h1 className='create-new-user'>Create New User</h1>
         <button onClick={() => navigate('/')}>Back to Home</button>
       </div>
       <label htmlFor='input-field'>New User:</label>
@@ -99,10 +100,10 @@ const CreateAccount = () => {
         <label htmlFor='password'>Password:</label>
         <input type='password' required='required' id='password' onChange={handlePWChange}/>
         <div>
-          <input type='submit' value='Create User' onClick={handleSubmit}/>
+          <input type='submit' className='submit-button' value='Create User' onClick={handleSubmit}/>
         </div>
        </form>
-    </>
+    </div>
   )
 }
 

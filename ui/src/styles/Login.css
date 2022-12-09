@@ -1,7 +1,30 @@
+@import './App.css';
+
 input:valid{
   border: 1px solid black;
 }
 
 input:invalid:required{
   border: 2px solid red;
+}
+
+.create-user{
+  display:flex;
+  flex-direction: column;
+}
+
+.submit-button{
+  font-family: 'Titillium Web', sans-serif;
+  width: fit-content;
+  margin: 1em;
+  margin-left: 0em;
+  border: 1px solid rgb(141, 141, 141);
+  border-radius: 0.3em;
+  background-color: rgb(48, 118, 209);
+  color:white;
+  cursor: pointer;
+}
+
+.login-header{
+  margin-bottom:1em;
 }

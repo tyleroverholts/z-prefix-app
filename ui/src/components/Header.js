@@ -20,14 +20,18 @@ const Header = () => {
     <>
     {cookies.username ?
       <div className='header'>
-        <p>Welcome {cookies.username}!</p>
-        <h3 className='page-title' onClick={() => {navigate('/')}}>Inventory Manager</h3>
+        <div className='header-text'>
+          <h4>Welcome {cookies.username}!</h4>
+          <h2 className='page-title' onClick={() => {navigate('/')}}>Inventory Manager</h2>
+        </div>
         <button className='buttons' onClick={logout}>Logout</button>
       </div>
     :
       <div className='header'>
-        <p>Welcome!</p>
-        <h3 className='page-title' onClick={() => {navigate('/')}}>Inventory Manager</h3>
+        <div className='header-text'>
+          <h4>Welcome!</h4>
+          <h2 className='page-title' onClick={() => {navigate('/')}}>Inventory Manager</h2>
+        </div>
         <div className='buttons'>
           <button onClick={()=> navigate('/Login')}>Login</button>
           <button onClick={() => navigate('/CreateAccount')}>Create New Account</button>

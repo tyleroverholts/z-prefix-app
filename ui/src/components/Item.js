@@ -62,7 +62,7 @@ const Item = () => {
         <h1 className='title'>{currentItem.item_name}</h1>
         <div className='item-buttons'>
         <button className='item-button' onClick={cookies.username ? ()=> {setCurrentItem(null); navigate(`/inventory/${cookies.username}`)} : ()=>navigate('/')}>Back to Inventory</button>
-          {cookies.username ?
+          {cookies.username === currentItem.username?
           <>
               <button className='item-button' onClick={()=> setEditEnabled(true)}>Edit Item</button>
               <button className='item-button' onClick={() => deleteItem(currentItem.id)}>Delete Item</button>

@@ -57,12 +57,18 @@ const Inventory = () => {
         <div className='page-header'>
           <h1 className='inv-header-text'>Current Inventory</h1>
         </div>
-        <button onClick={()=> {navigate('/CreateItem'); resetItemDefaults()}}>Create New Item</button>
+        <div className='inv-buttons'>
         {isSpecificInventory ?
-          <button onClick={()=> {navigate('/'); setIsSpecificInventory(false)}}>View Full Inventory</button>
-        : <></>}
+          <>
+            <button onClick={()=> {navigate('/CreateItem'); resetItemDefaults()}}>Create New Item</button>
+            <button onClick={()=> {navigate('/'); setIsSpecificInventory(false)}}>View Full Inventory</button>
+          </>
+        : <>
+          <div>Browse the current inventory</div>
+        </>}
         {cookies.username && !isSpecificInventory ? <button onClick={inventoryRedirect}>See My Inventory</button> : <></>}
-        <div className='item'>
+        </div>
+        <div className='items'>
           {typeof items !== 'string' && items.length ? items.map((item, index) => {
           return(
             <div className='inventory-item' key={index}>

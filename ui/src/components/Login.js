@@ -69,21 +69,21 @@ const Login = () => {
   }, [loginName, loginPass])
 
   return(
-    <>
-    <div className='home-button'>
-        <button onClick={() => navigate('/')}>Back to Home</button>
+    <div className='create-item'>
+      <div className='login-header'>
+        <h1 classANem='login-text'>Login</h1>
+        <button className='home-button' onClick={() => navigate('/')}>Back to Home</button>
       </div>
-      <label htmlFor='input-field'>New User:</label>
       <form className='create-user'>
         <label htmlFor='username' minLength='1'>Username:</label>
         <input type='text' required='required' id='username' onChange={handleLoginName}/>
         <label htmlFor='password'minLength='1'>Password:</label>
         <input type='password' required='required' id='password' onChange={handleLoginPass}/>
         <div>
-          <input type='submit' value='Login' onClick={handleSubmit}/>
+          <input type='submit' className='submit-button' value='Login' onClick={handleSubmit}/>
         </div>
        </form>
-    </>
+    </div>
   )
 }
 

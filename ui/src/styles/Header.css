@@ -5,11 +5,20 @@
   font-family: 'Titillium Web', sans-serif;;
   margin: -0.5em;
   margin-bottom: 0em;
-  padding-right: 1em;
+  /* padding-right: 1em; */
   padding-left: 1em;
 }
 
 .buttons{
   display:flex;
   align-self: center;
+}
+.header-text{
+  display:flex;
+  justify-content: space-around;
+  width: 30em;
+  align-items: center;
+}
+.page-title{
+  cursor: pointer;
 }
