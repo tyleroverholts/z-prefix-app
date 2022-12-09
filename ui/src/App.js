@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import config from './config.js';
 import { Routes, Route, useNavigate} from 'react-router-dom';
 import Home from './components/Home.js';
 import CreateAccount from './components/CreateAccount.js';
@@ -10,6 +11,8 @@ import Item from './components/Item.js'
 import cookie from 'cookie';
 import Header from './components/Header.js';
 import './styles/App.css'
+
+const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 function App() {
   const navigate = useNavigate()
