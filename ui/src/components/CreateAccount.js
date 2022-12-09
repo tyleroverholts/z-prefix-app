@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 // import Context from './Context.js';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CreateAccount.css'
-import config from './config.js';
+import config from '../config.js';
 const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 const CreateAccount = () => {

@@ -4,7 +4,7 @@ import Context from '../Context';
 import CreateItem from './CreateItem';
 import SingleItem from './SingleItem';
 import '../styles/Item.css'
-import config from './config.js';
+import config from '../config.js';
 const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 const Item = () => {
