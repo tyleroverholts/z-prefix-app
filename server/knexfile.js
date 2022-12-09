@@ -34,7 +34,7 @@ module.exports = {
       max: 10
     },
     migrations: {
-      tableName: 'knex_migrations'
+      directory: './migrations'
     }
   },
 
@@ -42,15 +42,13 @@ module.exports = {
     client: 'postgresql',
     connection: {
       database: process.env.DATABASE_URL +'?ssl=no-verify',
-      user:     'username',
-      password: 'password'
     },
     pool: {
       min: 2,
       max: 10
     },
     migrations: {
-      tableName: 'knex_migrations'
+      directory: './migrations'
     }
   }
 
