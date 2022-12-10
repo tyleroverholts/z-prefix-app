@@ -99,9 +99,7 @@ app.get('/inventory', async (req, res) => {
 
 app.get('/inventory/:username', async (req, res) => {
   let username = req.session.username;
-  console.log(username)
-  console.log(req.session.username)
-  if(username === req.params.username){
+  if(username == req.params.username){
     try{
       let items
       let userID = await getUserID(username)
@@ -153,7 +151,7 @@ app.post('/inventory', async (req, res) => {
       })
   }
   catch(err){
-    // console.log(err)
+    console.log(err)
     res.status(404).json(err)
   }
 })

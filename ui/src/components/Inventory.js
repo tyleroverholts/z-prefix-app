@@ -21,12 +21,10 @@ const Inventory = () => {
       .then(items => {
         if(typeof items === 'string'){
           setItems([])
-          throw items
         }else setItems(items)
-
       })
       .catch(err => {
-        console.log(err)
+        alert(err)
       })
     :
     window.history.replaceState(null, 'Inventory', '/inventory')
