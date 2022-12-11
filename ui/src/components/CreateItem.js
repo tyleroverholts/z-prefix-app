@@ -7,7 +7,7 @@ const ApiUrl = config[process.env.REACT_APP_NODE_ENV || "development"].apiUrl;
 
 const CreateItem = () => {
   const [postBody, setPostBody] = useState(null)
-  const { cookies, editEnabled, setEditEnabled, itemDefaults} = useContext(Context)
+  const { cookies, editEnabled, setEditEnabled, itemDefaults, setIsSpecificInventory} = useContext(Context)
   const navigate = useNavigate();
 
   const handleItemName = (event) => {
@@ -45,13 +45,20 @@ const CreateItem = () => {
     return false
   }
 
+  const validateQuantity = () => {
+    if(postBody.quantity){
+      return postBody.quantity > 0 ? true : false
+    }
+    return false
+  }
+
   useEffect(() => {
     if(itemDefaults) setPostBody(itemDefaults)
   }, [itemDefaults])
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if(validateName()){
+    if(validateName() && validateQuantity()){
       fetch(ApiUrl + '/inventory', {
         method: (editEnabled ? 'PATCH' : 'POST'),
         headers: {
@@ -66,6 +73,7 @@ const CreateItem = () => {
       .then(res => res.json())
       .then(res => {
           setEditEnabled(false);
+          setIsSpecificInventory(true);
           setTimeout(() => navigate(`/inventory/${cookies.username}`),500);
           alert(res)
         })
@@ -73,7 +81,7 @@ const CreateItem = () => {
         console.log(err);
       })
     }else{
-      alert('Item must have a name.')
+      alert('Item must have a name and a quantity greater than zero.')
     }
   }
 
@@ -98,7 +106,7 @@ const CreateItem = () => {
               <br/>
               <div className='single-item-edit'>
                 <label htmlFor='item-quantity' >Item Quantity:</label>
-                <input className='create-input'type='number' required='required' value={postBody.quantity > 1 ? postBody.quantity : 1} onChange={handleQuantity}/><br/>
+                <input className='create-input'type='number' required='required' value={postBody.quantity} onChange={handleQuantity}/><br/>
               </div>
               </div>
               <p>Entered by: {cookies.username}</p>
