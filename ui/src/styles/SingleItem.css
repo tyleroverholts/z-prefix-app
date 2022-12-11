@@ -2,7 +2,10 @@
   display:flex;
   flex-direction: column;
   align-self: flex-start;
+  max-width: 100%;
+  overflow: auto;
 }
+
 
 .item{
   margin-top: -0.3em;
